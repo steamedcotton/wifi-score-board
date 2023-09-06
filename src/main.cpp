@@ -4,6 +4,7 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 #include <ArduinoJson.h>
+#include "HomePage.h"
 
 #define ONBOARD_LED 16
 
@@ -11,8 +12,8 @@
 #define LATCH 12
 #define DATA 14
 
-const char *ssid = "Future Gadget Lab";
-const char *password = "ghost$hip";
+const char *ssid = "<SSID>";
+const char *password = "<PASSWORD>";
 
 ESP8266WebServer server(80);
 
@@ -89,6 +90,11 @@ void showNumber(float value)
 }
 
 
+// Serve up the Home Page
+void homepage() {
+  Serial.println("Sending home webpage");
+  server.send(200, "text/html", PAGE_MAIN);
+}
 
 // Serving Hello world
 void updateNumber()
@@ -145,7 +151,7 @@ void updateNumber()
     }
   }
 
-  server.send(200, "text/json", "{\"name\": \"Hello world\"}");
+  // server.send(200, "text/json", "{\"name\": \"Hello world\"}");
 
   // Blink LED
   digitalWrite(ONBOARD_LED, HIGH);
@@ -159,9 +165,7 @@ void updateNumber()
 // Define routing
 void restServerRouting()
 {
-  server.on("/", HTTP_GET, []()
-            { server.send(200, F("text/html"),
-                          F("Welcome to the REST Web Server")); });
+  server.on("/", HTTP_GET, homepage);
   server.on(F("/update-number"), HTTP_POST, updateNumber);
 }
 
